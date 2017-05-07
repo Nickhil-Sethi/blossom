@@ -377,4 +377,3 @@ def isSorted(arr):
 if __name__=='__main__':
 	B = BinaryNode('a',4)
 	print B
-	B.
