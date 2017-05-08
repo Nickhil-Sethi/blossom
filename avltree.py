@@ -1,45 +1,62 @@
-from binarytree import BinaryNode
+from binarytree import BinaryNode, BinaryTree
+
 # TODO : fix variable names, add exception handling
 class AVLnode(BinaryNode):
 	def __init__(self,key,value=None):
+		"""AVLnode object; inherits from BinaryNode, with added methods
+		for rotating left/right and tracking height, balance factor."""
+
 		BinaryNode.__init__(self,key,value)
-		self.balance_factor = 0
-		self.height = 1
+		self._BALANCE_FACTOR = 0
+		self._HEIGHT = 1
 	
 	def adjust_balance_factor(self):
-		left_height  = self.left.height if self.left else 0
-		right_height = self.right.height if self.right else 0
-		self.balance_factor = right_height - left_height
-		return self.balance_factor
+		"""Sets balance factor of self, assuming heights of left child and right child are already correct.
+		Applied iteratively moving up tree from root after insertion."""
+
+		left_height = self._LEFT_CHILD._HEIGHT if self._LEFT_CHILD else 0
+		right_height = self._RIGHT_CHILD._HEIGHT if self._RIGHT_CHILD else 0
+		self._BALANCE_FACTOR = right_height - left_height
+		return self._BALANCE_FACTOR
 
 	def adjust_height(self):
-		left_height  = self.left.height if self.left else 0
-		right_height = self.right.height if self.right else 0
-		self.height  = 1 + max(left_height,right_height)
-		return self.height
+		"""Sets self.height assuming heights of left and right children are correct."""
+		left_height = self._LEFT_CHILD._HEIGHT if self._LEFT_CHILD else 0
+		right_height = self._RIGHT_CHILD._HEIGHT if self._RIGHT_CHILD else 0
+		self._HEIGHT = 1 + max(left_height,right_height)
+		return self._HEIGHT
 
 	def adjust_size(self):
-		left_size = self.left._SIZE if self.left else 0
-		right_size = self.right.size if self.right else 0
+		"""sets self._SIZE assuming sizes of left and right are correct"""
+		left_size = self.left._SIZE if self._LEFT_CHILD else 0
+		right_size = self.right._SIZE if self._RIGHT_CHILD else 0
 		self._SIZE = 1 + left_size + right_size
 		return self._SIZE 
 	
 	def rotate_left(self):
-		if not self.right:
-			raise Exception('right not present; {} only has {}'.format(self.key,self.inOrder()))
+		"""
+		Returns
+		_______
 
-		P = self.parent
-		R = self.right
+		R : type AVLnode
+			right child of self, takes place of self in subtree after rotation"""
 
-		self.set_right(R.left)
+		if not self._RIGHT_CHILD:
+			raise Exception('{} cannot rotate left; has no right node.'.format(self))
+
+		P = self._PARENT
+		R = self._RIGHT_CHILD
+
+		self.set_right(R._LEFT_CHILD)
 		R.set_left(self)
 
-		if P and P.key < self.key:
+		# TODO : replace these w .is_right() and .is_left()
+		if P and P._KEY < self._KEY:
 			P.set_right(R)
 		elif P:
 			P.set_left(R)
 		else:
-			R.parent = None
+			R._PARENT = None
 
 		self.adjust_size()
 		self.adjust_height()
@@ -57,15 +74,16 @@ class AVLnode(BinaryNode):
 		return R
 
 	def rotate_right(self):
-		if not self.left:
-			raise Exception('left not present; only has {}'.format(self.inOrder()))
-		P 					= self.parent
-		L 					= self.left
+		if not self._LEFT_CHILD:
+			raise Exception('{} cannot rotate right; has no left node.'.format(self))
 
-		self.set_left(L.right)
+		P = self._PARENT
+		L = self._LEFT_CHILD
+
+		self.set_left(L._RIGHT_CHILD)
 		L.set_right(self)
 
-		if P and P.key < self.key:
+		if P and P._KEY < self._KEY:
 			P.set_right(L)
 		elif P:
 			P.set_left(L)
@@ -98,7 +116,7 @@ class AVLnode(BinaryNode):
 				current.value = value
 				return
 			stack.append(current)
-			prev 	= current
+			prev = current
 			if current.key < key:
 				current = current.right
 			else:
@@ -109,6 +127,7 @@ class AVLnode(BinaryNode):
 		else:
 			prev.set_left(newNode)
 
+		# recompute heights and balance factors, rotate subtrees if necessary
 		stack.append(newNode)
 		newRoot = None
 		while stack:
@@ -116,7 +135,9 @@ class AVLnode(BinaryNode):
 			current.adjust_size()
 			current.adjust_height()
 			if current.adjust_balance_factor() > 1:
+				
 				assert current.balance_factor == 2
+				
 				if current.right.right and key in current.right.right:
 					current = current.rotate_left()
 				else:
@@ -125,7 +146,9 @@ class AVLnode(BinaryNode):
 				if not current.parent:
 					newRoot = current
 			elif current.adjust_balance_factor() < -1:
+				
 				assert current.balance_factor == -2
+				
 				if current.left.left and key in current.left.left:
 					current	= current.rotate_right()
 				else:
@@ -207,69 +230,33 @@ class AVLnode(BinaryNode):
 						current.adjust_height()
 						current.adjust_balance_factor()
 						current = current.parent
-
 					return 
-class AVLTree(object):
+
+class AVLTree(BinaryTree):
 	def __init__(self):
-		self.root = None
+		BinaryTree.__init__(self)
 
 	def insert(self,key,value=None):
 		if not self.root:
-			self.root     				= AVLnode(key,value)
+			self.root = AVLnode(key,value)
 		else:
-			newRoot       				= self.root.insert(key,value)
+			# in case tree has had to rotate from root
+			newRoot = self.root.insert(key,value)
 			if newRoot:
-				self.root 				= newRoot
-
-	def size(self):
-		return self.root.size if self.root else 0
-
-	def search(self,key):
-		if self.root:
-			found = self.root.search(key)
-			if found:
-				return found
-		raise KeyError('key {} not in AVLTree'.format(key))
+				self.root = newRoot
 
 	def delete(self,key):
-		if self.root and key != self.root.key:
+		if self.root and key != self.root._KEY:
 			self.root.delete(key)
 		elif self.root:
-			newRoot 	        		= self.root.min_right()
+			newRoot = self.root.min_right()
 			if (not newRoot) and self.root.left:
-				self.root 				= self.root.left
-				self.root.parent 		= None
+				self.root = self.root.left
+				self.root.parent = None
 			elif newRoot:
-				newRoot.parent.left 	= None
-				newRoot.parent      	= None
+				newRoot.parent.left = None
+				newRoot.parent = None
 			else:
-				self.root 				= None
+				self.root = None
 		else:
 			raise KeyError('key {} not in AVLTree'.format(key))
-
-	def inOrder(self):
-		if not self.root:
-			return []
-		else:
-			return self.root.inOrder()
-
-	def __iter__(self):
-		"""Iterates through elements via InOrder traversal. Non-recursive implementation."""
-		stack = [self]
-		current = self
-		while stack:
-			if current.left:
-				current = current.left
-				stack.append(current)
-			else:
-				while stack:
-					current = stack.pop()
-					yield current
-					if current.right:
-						current = current.right
-						stack.append(current)
-						break
-
-		# items = self.inOrder()
-		# for item in items:
-		# 	yield item

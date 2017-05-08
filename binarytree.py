@@ -66,8 +66,11 @@ class BinaryNode(object):
 
 	def is_right(self):
 		"""Test for if self is a right child of another node."""
-
 		return (self._PARENT is not None and self._PARENT._KEY < self._KEY)
+
+	def is_left(self):
+		"""Test for if self is a left child of another node."""
+		return (self._PARENT is not None and self._PARENT._KEY > self._KEY)
 
 	def set_left(self,node):
 		"""Sets node to self.left, and self to node.parent."""
@@ -258,6 +261,14 @@ class BinaryNode(object):
 						stack.append(current)
 						break
 		return ret
+
+	def __contains__(self,key):
+		"""Test for presence/absence of node w ._KEY == key in subtree of self"""
+		try:
+			self.search(key)
+			return True
+		except:
+			return False
 
 	def __repr__(self):
 		return "({}, {})".format(self._KEY,self._VALUE)
