@@ -1,7 +1,7 @@
 # blossom
 
-A library for tree structures. Right now this is implemented in Python, but hopefully will soon have fast implementations of Binary Trees, AVL Trees, Prefix Trees, and more written in C++. 
+Blossom is a Python library for high performance tree and graph structures. Right now this is implemented in pure Python, but hopefully will soon be a C++ hook.
 
-# authors
+# Authors
 
-Nickhil Sethi, Bill Garate.
+Developed by Nickhil Sethi, Bill Garate.
