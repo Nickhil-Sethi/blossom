@@ -1,7 +1,5 @@
 _KEY_TYPES = {str : 'str', int : 'int', float : 'float'}
 
-# TODO : key errors, __repr__()
-
 class BinaryNode(object):
 	def __init__(self,key,value=None):
 		"""BinaryNode object
@@ -170,8 +168,8 @@ class BinaryNode(object):
 			else:
 				current	= current._LEFT_CHILD
 
-		# raise an error if not present; more pythonic way of exiting.
-		raise KeyError('({}, . ) not present in subtree of {}'.format(key,self))
+		# raise KeyError if not found
+		raise KeyError('{} {} not present in subtree of {}'.format(_KEY_TYPES[type(key)],key,self))
 
 
 	# TODO : Rename attributes
@@ -271,7 +269,7 @@ class BinaryNode(object):
 			return False
 
 	def __repr__(self):
-		return "({}, {})".format(self._KEY,self._VALUE)
+		return "({} {}, {})".format(_KEY_TYPES[type(self._KEY)],self._KEY,self._VALUE)
 
 class BinaryTree(object):
 	def __init__(self):
@@ -326,13 +324,14 @@ class BinaryTree(object):
 		_______
 
 		node._VALUE : arbitrary type
-			value of node with node._KEY == key"""
+			value of node with node._KEY == key
+			prints type[key] key that is not present."""
 
 		try:
 			node = self.root.search(key)
 			return node._VALUE
 		except:
-			raise KeyError('{} (type {})'.format(key,_KEY_TYPES[type(key)]))
+			raise KeyError('{} {}'.format(_KEY_TYPES[type(key)],key))
 		
 	def __setitem__(self,key,value):
 		"""inserts BinaryNode(key,value) into self"""
@@ -366,7 +365,7 @@ class BinaryTree(object):
 
 	def __iter__(self):
 		"""iterates nodes of tree by in order traversal"""
-		stack = [self.root]
+		stack = [self.root] if self.root else []
 		current = self.root
 		while stack:
 			if current._LEFT_CHILD:
