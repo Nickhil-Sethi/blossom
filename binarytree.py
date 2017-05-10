@@ -1,5 +1,6 @@
-_KEY_TYPES = {str,int,float}
+_KEY_TYPES = {str : 'str', int : 'int', float : 'float'}
 
+# TODO : UnitTest inOrder(); most fundamental function to test others
 class BinaryNode(object):
 	def __init__(self,key,value=None):
 		"""BinaryNode object
@@ -64,8 +65,11 @@ class BinaryNode(object):
 
 	def is_right(self):
 		"""Test for if self is a right child of another node."""
-
 		return (self._PARENT is not None and self._PARENT._KEY < self._KEY)
+
+	def is_left(self):
+		"""Test for if self is a left child of another node."""
+		return (self._PARENT is not None and self._PARENT._KEY > self._KEY)
 
 	def set_left(self,node):
 		"""Sets node to self.left, and self to node.parent."""
@@ -165,35 +169,9 @@ class BinaryNode(object):
 			else:
 				current	= current._LEFT_CHILD
 
-		# raise an error if not present; more pythonic way of exiting.
-		raise KeyError('({}, . ) not present in subtree of {}'.format(key,self))
+		# raise KeyError if not found
+		raise KeyError('{} {} not present in subtree of {}'.format(_KEY_TYPES[type(key)],key,self))
 
-	def inOrder(self):
-		"""Returns list of elements in subtree recovered by inOrder traversal.
-
-		Returns
-		_______
-
-		ret : type list[BinaryNode]
-			list of nodes in subtree of self, recovered by inOrder traversal."""
-		
-		stack = [self]
-		# TODO : RENAME THIS
-		ret = []
-		current = self
-		while stack:
-			if current._LEFT_CHILD:
-				current = current._LEFT_CHILD
-				stack.append(current)
-			else:
-				while stack:
-					current = stack.pop()
-					ret.append(current)
-					if current._RIGHT_CHILD:
-						current = current._RIGHT_CHILD
-						stack.append(current)
-						break
-		return ret
 
 	# TODO : Rename attributes
 	def delete(self,key):
@@ -256,14 +234,49 @@ class BinaryNode(object):
 			del node
 			return
 
+	def inOrder(self):
+		"""Returns list of elements in subtree recovered by inOrder traversal.
+
+		Returns
+		_______
+
+		ret : type list[BinaryNode]
+			list of nodes in subtree of self, recovered by inOrder traversal."""
+		
+		# TODO : RENAME THIS
+		ret = []
+		stack = [self]
+		current = self
+		while stack:
+			if current._LEFT_CHILD:
+				current = current._LEFT_CHILD
+				stack.append(current)
+			else:
+				while stack:
+					current = stack.pop()
+					ret.append(current)
+					if current._RIGHT_CHILD:
+						current = current._RIGHT_CHILD
+						stack.append(current)
+						break
+		return ret
+
+	def __contains__(self,key):
+		"""Test for presence/absence of node w ._KEY == key in subtree of self"""
+		try:
+			self.search(key)
+			return True
+		except:
+			return False
+
 	def __repr__(self):
-		return "({}, {})".format(self._KEY,self._VALUE)
+		return "({} {}, {})".format(_KEY_TYPES[type(self._KEY)],self._KEY,self._VALUE)
 
 class BinaryTree(object):
 	def __init__(self):
 		"""
-		BinaryTree object; wraps all methods of BinaryNode, but acts like Python dict() type,
-		mapping keys to values.
+		BinaryTree object; wraps all methods of BinaryNode, but acts like Python dict() or set(),
+		mapping keys to values, or simply storying values.
 
 		Uses python magic methods e.g. __setitem__, __getitem__.
 
@@ -292,9 +305,8 @@ class BinaryTree(object):
 		Parameters
 		__________
 
-		key : type [ int , str , float ]
+		key : type [ int , str , float ]"""
 
-		"""
 		try: 
 			self.root.search(key)
 			return True
@@ -313,13 +325,14 @@ class BinaryTree(object):
 		_______
 
 		node._VALUE : arbitrary type
-			value of node with node._KEY == key"""
+			value of node with node._KEY == key
+			prints type[key] key that is not present."""
 
 		try:
 			node = self.root.search(key)
 			return node._VALUE
 		except:
-			raise KeyError('key {} not present'.format(key))
+			raise KeyError('{} {}'.format(_KEY_TYPES[type(key)],key))
 		
 	def __setitem__(self,key,value):
 		"""inserts BinaryNode(key,value) into self"""
@@ -333,14 +346,16 @@ class BinaryTree(object):
 
 		Raises
 		______ 
+
 		KeyError : if key not present """
+
 		if self.root:
 			if key == self.root._KEY:
 				self.root = None
 			else:
 				self.delete(key)
 		else:
-			raise KeyError('key {} not present'.format(key))
+			raise KeyError('{} {}'.format(_KEY_TYPES[type(key)],key))
 
 	def __repr__(self):
 		"""returns list of nodes as string, or []"""
@@ -351,14 +366,13 @@ class BinaryTree(object):
 
 	def __iter__(self):
 		"""iterates nodes of tree by in order traversal"""
-		stack = [self]
-		current = self
+		stack = [self.root] if self.root else []
+		current = self.root
 		while stack:
 			if current._LEFT_CHILD:
 				current = current._LEFT_CHILD
 				stack.append(current)
 			else:
-				yield current
 				while stack:
 					current = stack.pop()
 					yield current
@@ -366,6 +380,7 @@ class BinaryTree(object):
 						current = current._RIGHT_CHILD
 						stack.append(current)
 	def __len__(self):
+		"""returns number of nodes in tree"""
 		return self.root._SIZE if self.root is not None else 0
 
 def isSorted(arr):
@@ -375,5 +390,8 @@ def isSorted(arr):
 	return True
 
 if __name__=='__main__':
-	B = BinaryNode('a',4)
+	B = BinaryTree()
+	B[4] = 'a'
+	B[5] = 'b'
+	B['6'] = 4
 	print B
