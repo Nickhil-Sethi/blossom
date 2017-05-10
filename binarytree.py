@@ -1,5 +1,6 @@
 _KEY_TYPES = {str : 'str', int : 'int', float : 'float'}
 
+# TODO : UnitTest inOrder(); most fundamental function to test others
 class BinaryNode(object):
 	def __init__(self,key,value=None):
 		"""BinaryNode object
@@ -242,9 +243,9 @@ class BinaryNode(object):
 		ret : type list[BinaryNode]
 			list of nodes in subtree of self, recovered by inOrder traversal."""
 		
-		stack = [self]
 		# TODO : RENAME THIS
 		ret = []
+		stack = [self]
 		current = self
 		while stack:
 			if current._LEFT_CHILD:

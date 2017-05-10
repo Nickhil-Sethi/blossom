@@ -4,7 +4,16 @@ from binarytree import BinaryNode, BinaryTree
 class AVLnode(BinaryNode):
 	def __init__(self,key,value=None):
 		"""AVLnode object; inherits from BinaryNode, with added methods
-		for rotating left/right and tracking height, balance factor."""
+		for rotating left/right and tracking height, balance factor.
+
+		Attributes
+		__________
+
+		_HEIGHT : type int
+			maximum branch length starting at self. initialized to 1.
+
+		_BALANCE_FACTOR : type int 
+			_HEIGHT of right child - _HEIGHT of left child. _HEIGHT = 0 for NoneType"""
 
 		BinaryNode.__init__(self,key,value)
 		self._BALANCE_FACTOR = 0
@@ -13,7 +22,6 @@ class AVLnode(BinaryNode):
 	def adjust_balance_factor(self):
 		"""Sets balance factor of self, assuming heights of left child and right child are already correct.
 		Applied iteratively moving up tree from root after insertion."""
-
 		left_height = self._LEFT_CHILD._HEIGHT if self._LEFT_CHILD else 0
 		right_height = self._RIGHT_CHILD._HEIGHT if self._RIGHT_CHILD else 0
 		self._BALANCE_FACTOR = right_height - left_height
