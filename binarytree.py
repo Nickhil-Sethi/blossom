@@ -1,6 +1,9 @@
 _KEY_TYPES = {str : 'str', int : 'int', float : 'float'}
 
 # TODO : UnitTest inOrder(); most fundamental function to test others
+# TODO : rewrite inOrder() more elegantly? 
+# TODO : investigate gccollect for BinaryTree; will object be garbage collected?
+
 class BinaryNode(object):
 	def __init__(self,key,value=None):
 		"""BinaryNode object
@@ -73,18 +76,16 @@ class BinaryNode(object):
 
 	def set_left(self,node):
 		"""Sets node to self.left, and self to node.parent."""
-		
 		if node is None:
 			if self._LEFT_CHILD is not None:
 				self._LEFT_CHILD._PARENT = None
-			self._LEFT = None
+			self._LEFT_CHILD = None
 			return
 		self._LEFT_CHILD = node
 		node._PARENT = self
 
 	def set_right(self,node):
 		"""Sets node to self.right and self to node.parent."""
-
 		if node is None:
 			if self._RIGHT_CHILD is not None:
 				self._RIGHT_CHILD._PARENT = None
@@ -157,13 +158,10 @@ class BinaryNode(object):
 		if type(key) not in _KEY_TYPES:
 			raise TypeError('key must be of type str, int, or float.')
 
-		prev = None
 		current = self
 		while current:
-			
 			if current._KEY == key:
 				return current
-			prev = current
 			if current._KEY < key:
 				current = current._RIGHT_CHILD
 			else:
@@ -184,10 +182,10 @@ class BinaryNode(object):
 		
 		node = self.search(key)
 
-		if node != None and node != self:
+		if node is not self:
 			self._SIZE -= 1
 			parent = node._PARENT
-			
+
 			if not (node._LEFT_CHILD or node._RIGHT_CHILD):
 				if parent._KEY < node._KEY:
 					parent._RIGHT_CHILD = None
@@ -347,7 +345,7 @@ class BinaryTree(object):
 		Raises
 		______ 
 
-		KeyError : if key not present """
+		KeyError : if key not present"""
 
 		if self.root:
 			if key == self.root._KEY:
@@ -393,5 +391,6 @@ if __name__=='__main__':
 	B = BinaryTree()
 	B[4] = 'a'
 	B[5] = 'b'
-	B['6'] = 4
-	print B
+
+	for x in B:
+		print x
