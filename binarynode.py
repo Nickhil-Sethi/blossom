@@ -165,12 +165,16 @@ class BinaryNode(object):
 				current = current._RIGHT_CHILD
 			else:
 				current	= current._LEFT_CHILD
+		
 		# raise KeyError if not found
-		raise KeyError('{} {} not present in subtree of {}'.format(_KEY_TYPES[type(key)],key,self))
+		if type(key) is str:
+			raise KeyError("'{}' not present in subtree of {}".format(key,self))
+		raise KeyError("{} not present in subtree of {}".format(key,self))
 
 
 	# TODO : Rename attributes
 	def delete(self,key):
+		# TODO : investigate this
 		"""Deletes node with key if exists in subtree and is not self.
 
 		Raises
@@ -266,4 +270,10 @@ class BinaryNode(object):
 			return False
 
 	def __repr__(self):
-		return "({} {}, {})".format(_KEY_TYPES[type(self._KEY)],self._KEY,self._VALUE)
+		if type(self._KEY) is str:
+			return "('{}', {})".format(self._KEY, self._VALUE)
+		return "({}, {})".format(self._KEY,self._VALUE)
+
+if __name__=='__main__':
+	B = BinaryNode(5)
+	print B

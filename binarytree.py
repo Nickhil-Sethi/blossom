@@ -1,7 +1,5 @@
 from binarynode import BinaryNode
 
-_KEY_TYPES = {str : 'str', int : 'int', float : 'float'}
-
 # TODO : DANGER DELETE FUNCTION HAS LOOP DO NOT USE IT
 # TODO : investigate gccollect for BinaryTree; will object be garbage collected?
 # TODO : integrate with Python3 ?
@@ -140,8 +138,5 @@ if __name__=='__main__':
 	B = BinaryTree()
 	B[4] = 'a'
 	B[5] = 'b'
-	B[3] = 'c'
-
-	del B[4]
-
+	B['3'] = 'c'
 	print B
