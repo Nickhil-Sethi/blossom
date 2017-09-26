@@ -6,8 +6,7 @@ from binarynode import BinaryNode
 
 class BinaryTree(object):
 	def __init__(self):
-		"""
-		BinaryTree object; wraps all methods of BinaryNode, but acts like Python dict() or set(),
+		"""BinaryTree object; wraps all methods of BinaryNode, but acts like Python dict() or set(),
 		mapping keys to values, or simply storying values.
 
 		Uses python magic methods e.g. __setitem__, __getitem__.

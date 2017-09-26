@@ -291,13 +291,12 @@ if __name__=='__main__':
 	import numpy as np
 	B = BinaryNode(np.random.randint(1000))
 
-	for j in xrange(100):
+	for j in xrange(10):
 		for i in xrange(10000):
 			B.insert(np.random.randint(1000))
 
 		l = B.inOrder()
 
 		for node in l:
-			# print "Deleteing {}".format(node)
 			B.delete(node._KEY) 
 
