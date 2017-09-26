@@ -95,7 +95,7 @@ class BinaryNode(object):
 
 	def insert(self,key,value=None):
 		"""Creates binaryNode(key,value) and inserts into subtree of self. 
-		If key already exists, sets _VALUE of retrieved key to value
+		If key already exists, overrides node._VALUE of retrieved node to value
 
 		Parameters
 		__________
@@ -111,7 +111,11 @@ class BinaryNode(object):
 
 		TypeError : key is not in _KEY_TYPES"""
 
-		newNode = BinaryNode(key,value)
+		if not isinstance(key, BinaryNode):
+			newNode = BinaryNode(key,value)
+		else:
+			newNode = key
+
 		current = self
 		
 		while current:
@@ -174,7 +178,7 @@ class BinaryNode(object):
 
 	# TODO : Rename attributes
 	def delete(self,key):
-		# TODO : investigate this
+		# TODO : THIS DOES NOT WORK
 		"""Deletes node with key if exists in subtree and is not self.
 
 		Raises
@@ -184,6 +188,8 @@ class BinaryNode(object):
 		
 		node = self.search(key)
 
+		# a node cannot delete itself
+		# root deletion function is handled as a special case
 		if node is not self:
 			self._SIZE -= 1
 			parent = node._PARENT
@@ -212,23 +218,30 @@ class BinaryNode(object):
 				minRight = node.min_right()
 				Rparent  = minRight._PARENT
 				if minRight is node._RIGHT_CHILD:
+					# set parent.right is minRight
 					if parent._KEY < node._KEY:
 						parent.set_right(minRight)
 					else:
 						parent.set_left(minRight)
+
 					minRight.set_left(node._LEFT_CHILD)
 					node._LEFT_CHILD = None
 					node._RIGHT_CHILD = None
+					node._PARENT = None
 				else:
 					if minRight._RIGHT_CHILD:
 						Rparent.set_left(minRight._RIGHT_CHILD)
 						minRight._RIGHT_CHILD = None
+						minRight._PARENT = None
 					else:
 						Rparent._LEFT_CHILD = None
+						minRight._PARENT = None
+					
 					if parent._KEY < node._KEY:
 						parent.set_right(minRight)
 					else:
 						parent.set_left(minRight)
+
 					minRight.set_left(node._LEFT_CHILD)
 					minRight.set_right(node._RIGHT_CHILD)
 			del node
@@ -275,5 +288,16 @@ class BinaryNode(object):
 		return "({}, {})".format(self._KEY,self._VALUE)
 
 if __name__=='__main__':
-	B = BinaryNode(5)
-	print B
+	import numpy as np
+	B = BinaryNode(np.random.randint(1000))
+
+	for j in xrange(100):
+		for i in xrange(10000):
+			B.insert(np.random.randint(1000))
+
+		l = B.inOrder()
+
+		for node in l:
+			# print "Deleteing {}".format(node)
+			B.delete(node._KEY) 
+
