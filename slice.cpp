@@ -31,6 +31,10 @@ class Slice {
 
 			return *this;
 		};
+		
+		string get_text() const {
+			return text->substr(start, end - start);
+		};
 
 		friend ostream& operator <<(ostream&, const Slice&);
 		friend const Slice merge(const Slice&, const Slice&);
@@ -38,10 +42,9 @@ class Slice {
 };
 
 ostream& operator <<(ostream& out, const Slice& v) {
-	out << v.text->substr(v.start, v.end - v.start);
+	out << v.get_text();
 	return out;
 };
-
 
 const Slice merge(const Slice& sl1, const Slice& sl2) {
 	// assert same text
@@ -49,6 +52,7 @@ const Slice merge(const Slice& sl1, const Slice& sl2) {
 	int end = max(sl1.end, sl2.end);
 	return Slice(sl1.text, start, end);
 };
+
 int main() {
 	string s = "Hello there! This is Nickhil Sethi";
 	Slice v = Slice(&s, 0, 7);
