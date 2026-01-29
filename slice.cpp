@@ -1,29 +1,29 @@
 #include <iostream>
 using namespace std;
 
-class View {
+class Slice {
 	private:
 		string* text;
 		int start;
 		int end;
 	public:
-		View(string* txt, int st, int en) {
+		Slice(string* txt, int st, int en) {
 			text = txt;
 			start = st;
 			end = en;
 		};
-		friend ostream& operator <<(ostream&, const View&);
+		friend ostream& operator <<(ostream&, const Slice&);
 	
 };
 
-ostream& operator <<(ostream& out, const View& v) {
+ostream& operator <<(ostream& out, const Slice& v) {
 	out << v.text->substr(v.start, v.end - v.start);
 	return out;
 };
 
 int main() {
 	string s = "Hello there! This is Nickhil Sethi";
-	View v = View(&s, 0, 7);
+	Slice v = Slice(&s, 0, 7);
 	cout << v << endl;
 	return 0;
 }
