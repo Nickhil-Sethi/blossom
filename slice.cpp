@@ -3,11 +3,11 @@ using namespace std;
 
 class Slice {
 	private:
-		string* text;
+		const string* text;
 		int start;
 		int end;
 	public:
-		Slice(string* txt, int st, int en) {
+		Slice(const string* txt, int st, int en) {
 			// error checking here
 			text = txt;
 			start = st;
@@ -53,10 +53,19 @@ const Slice merge(const Slice& sl1, const Slice& sl2) {
 	return Slice(sl1.text, start, end);
 };
 
+vector<Slice> analyze_text(string& text, int slice_length) {
+	vector<Slice> ret;
+	for (int i = 0; i < text.length() - slice_length; i++) {
+		ret.push_back(Slice(&text, i, i+slice_length));
+	}
+	return ret;
+}
+
 int main() {
 	string s = "Hello there! This is Nickhil Sethi";
-	Slice v = Slice(&s, 0, 7);
-	Slice w = Slice(&s, 7, 14);
-	cout << merge(v,w) << endl;
+	vector<Slice> spans = analyze_text(s, 3);
+	for(auto s : spans) {
+		cout << s << endl;
+	}
 	return 0;
 }
