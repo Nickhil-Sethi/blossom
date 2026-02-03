@@ -26,11 +26,10 @@ vector<Slice> analyze_text(string& text, int slice_length) {
 	return ret;
 }
 
-int main() {
+void  test_slice() {
 	string s = "Hello there! This is Nickhil Sethi";
 	vector<Slice> spans = analyze_text(s, 3);
 	for(auto s : spans) {
 		cout << s << endl;
 	}
-	return 0;
 }

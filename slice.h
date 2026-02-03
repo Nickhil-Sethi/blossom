@@ -1,3 +1,6 @@
+#ifndef SLICE_H
+#define SLICE_H
+
 #include <iostream>
 using namespace std;
 
@@ -54,3 +57,5 @@ class Slice {
 
 const Slice merge(const Slice& sl1, const Slice& sl2);
 vector<Slice> analyze_text(string& text, int slice_length);
+
+#endif
