@@ -20,10 +20,24 @@ class Slice {
 			end = sl.end;
 		};	
 		
+		const bool operator ==(const Slice& sl) {
+			if (this->text != sl.text) {
+				return false;
+			}
+			if (this->start != sl.start) {
+				return false;
+			}
+			if (this->end != sl.end) {
+				return false;
+			}
+			return true;
+			
+		};
+
 		const Slice& operator =(const Slice& sl) {
-			// if (*this == sl) {
-			//	return *this;
-			//}
+			if (*this == sl) {
+				return *this;
+			}
 
 			text = sl.text;
 			start = sl.start;
